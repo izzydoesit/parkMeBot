@@ -40,8 +40,7 @@ export default async (options) => {
         'Start Date',
         'End Date',
         'Login Count',
-        'Items Purchased',
-        'Items Returned',
+        'Price',
       ];
 
       const offers = parkingOffers.map(offer => [
@@ -49,8 +48,7 @@ export default async (options) => {
         offer.startDate,
         offer.endDate,
         offer.loginCount,
-        offer.itemsPurchased,
-        offer.itemsReturned,
+        offer.price,
       ]);
 
       const filePath = offersFilePath;
