@@ -55,7 +55,7 @@ export const getListFilesDir = () => {
   }
 };
 
-export const spotExists = async (date) => {
+export const offerExists = async (date) => {
   let exists = false;
   // check pool for spots on day
 
