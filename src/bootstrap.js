@@ -13,7 +13,7 @@ export default function (app) {
   app.use((req, res) => {
     res.status(404).send({
       status: 404,
-      message: "The requested resource was not found"
+      message: 'The requested resource was not found',
     });
   });
 
@@ -25,7 +25,7 @@ export default function (app) {
       : err.stack;
     res.status(500).send({
       status: 500,
-      message
+      message,
     });
   });
 }
