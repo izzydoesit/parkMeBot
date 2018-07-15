@@ -6,10 +6,12 @@ import {
   offerExists,
   bidExists,
   fileExists,
+  getListFilesDir,
 } from '../../utils';
 import { postChatMessage, uploadFile } from '../slack';
 // Parking Spots
 import getParkingOffers from './getParkingOffers';
+import getParkingBids from './getParkingBids';
 
 const slackConfig = config.get('slack');
 
@@ -22,7 +24,25 @@ const PARKING_OFFERS_CONFIG = {
   },
 };
 
+const PARKING_BIDS_CONFIG = {
+  parkingBids: {
+    name: 'Parking Spot Bids',
+    namePrefix: 'parkingBids',
+    type: 'csv',
+    func: getParkingBids,
+  },
+};
+
 export const parkingOffersList = Object.entries(PARKING_OFFERS_CONFIG)
+  .map(([key, value]) => {
+    const list = {
+      text: value.name,
+      value: key,
+    };
+    return list;
+  });
+
+export const parkingBidsList = Object.entries(PARKING_BIDS_CONFIG)
   .map(([key, value]) => {
     const list = {
       text: value.name,
@@ -112,7 +132,52 @@ export const generateParkingOffersList = async (options) => {
       log.error(new Error(`offerKey: ${offerKey} did not match any parking spot offers. slackReqObj: ${slackReqObjString}`));
       const response = {
         response_type: 'in_channel',
-        text: 'Hmmm :thinking_face" Seems like that parking spot offer is not available. Please try again later as I look into what went wrong.',
+        text: 'Hmmm :thinking_face" Seems like that parking spot list is not available. Please try again later as I look into what went wrong.',
+      };
+      return response;
+    }
+
+    const listTmpName = `${list.namePrefix}_${Date.now()}.${list.type}`;
+    const listFilesDir = getListFilesDir();
+    const listFilePath = path.join(listFilesDir, listTmpName);
+
+    const listParams = {
+      listName: list.name,
+      listTmpName,
+      listType: list.type,
+      listFilePath,
+      listFunc() {
+        return list.func({ listFilePath });
+      },
+    };
+
+    // Begin async list generation
+    generateListImplAsync(listParams, { slackReqObj });
+
+    const response = {
+      response_type: 'in_channel',
+      text: `Got it :thumbsup: Generating requested list *${list.name}*\nI'll notify you when I'm done.`,
+      mrkdwn: true,
+      mrkdwnn_in: ['text'],
+    };
+    return response;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const generateParkingBidsList = async (options) => {
+  try {
+    const { slackReqObj } = options;
+    const offerKey = slackReqObj.actions[0].selected_options[0].value;
+    const list = PARKING_BIDS_CONFIG(offerKey);
+
+    if (list === undefined) {
+      const slackReqObjString = JSON.stringify(slackReqObj);
+      log.error(new Error(`offerKey: ${offerKey} did not match any parking spot offers. slackReqObj: ${slackReqObjString}`));
+      const response = {
+        response_type: 'in_channel',
+        text: 'Hmmm :thinking_face" Seems like that parking spot list is not available. Please try again later as I look into what went wrong.',
       };
       return response;
     }
