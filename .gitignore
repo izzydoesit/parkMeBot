@@ -59,3 +59,6 @@ typings/
 
 # next.js build output
 .next
+
+# development key-values
+development.json
