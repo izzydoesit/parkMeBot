@@ -1,0 +1,32 @@
+{
+  "name": "Park Me Bot",
+  "version": "1.0.0",
+  "description": "\"The bot that helps you find a spot!\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/izzydoesit/parkMeBot.git"
+  },
+  "keywords": [
+    "slack",
+    "bot"
+  ],
+  "author": "Israel D. Matos",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/izzydoesit/parkMeBot/issues"
+  },
+  "homepage": "https://github.com/izzydoesit/parkMeBot#readme",
+  "dependencies": {
+    "base64url": "^3.0.0",
+    "botkit": "^0.6.15",
+    "botkit-storage-mongo": "^1.0.7",
+    "debug": "^3.1.0",
+    "hoek": "^5.0.3",
+    "lodash": "^4.17.10",
+    "mongodb": "^3.1.1"
+  }
+}
