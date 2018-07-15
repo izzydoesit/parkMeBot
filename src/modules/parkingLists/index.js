@@ -52,7 +52,7 @@ const generateListImplAsync = async (options, { slackReqObj }) => {
       const message = {
         responseUrl: slackReqObj.response_url,
         replaceOriginal: false,
-        text: `There's currently no spots available for *${listName}*`,
+        text: `There's currently no parking spot offers available for *${listName}*`,
         mrkdwnn: true,
         mrkdwn_in: ['text'],
       };
