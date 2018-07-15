@@ -1,6 +1,6 @@
 import express from 'express';
 import { log } from './utils';
-import { parkingPool } from './modules/reports';
+import { parkingSpotList, generateParkingList } from './modules/parkingLists';
 
 const router = new express.Router();
 
@@ -16,18 +16,32 @@ router.post('/slack/command/parkme', async (req, res) => {
         fallback: 'What day would you like to park?',
         color: '#2c963f',
         attachment_type: 'default',
-        callback_id: 'findSpot',
+        callback_id: 'spot_selection',
         actions: [{
           name: 'date_select_menu',
           text: 'choose a date...',
           type: 'select',
-          options: 'parkingSpotList'
-        }]
-      }]
+          options: 'parkingSpotOffers',
+        }],
+      }],
     };
     return res.json(response);
   } catch (err) {
     return res.status(500).send('Something blew up. We\'re looking into it.');
+  }
+});
+
+router.post('/slack/actions', async (req, res) => {
+  try {
+    const slackReqObj = JSON.parse(req.body.payload);
+    let response;
+    if (slackReqObj.callback_id === 'spot_selection') {
+      response = await generateParkingList({ slackReqObj });
+    }
+    return res.json(response);
+  } catch (err) {
+    log.error(err);
+    return res.status(500).send('Something blew up. We\'re looking into it');
   }
 });
 
