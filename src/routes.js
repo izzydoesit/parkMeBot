@@ -1,6 +1,6 @@
 import express from 'express';
 import { log } from './utils';
-import { parkingSpotList, generateParkingList } from './modules/parkingLists';
+import { parkingOffersList, generateParkingOffersList } from './modules/parkingLists';
 
 const router = new express.Router();
 
@@ -36,7 +36,7 @@ router.post('/slack/actions', async (req, res) => {
     const slackReqObj = JSON.parse(req.body.payload);
     let response;
     if (slackReqObj.callback_id === 'spot_selection') {
-      response = await generateParkingList({ slackReqObj });
+      response = await generateParkingOffersList({ slackReqObj });
     }
     return res.json(response);
   } catch (err) {
