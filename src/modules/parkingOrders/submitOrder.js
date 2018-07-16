@@ -1,13 +1,36 @@
 import { log } from '../../utils';
 import { postChatMessage, sendDirectMessage } from '../slack';
+import Couchbase from 'couchbase';
+const cluster = new Couchbase.Cluster('couchbase://localhost:8000');
+// cluster.authenticate('user', 'pass');
+let orders = cluster.openBucket('orders');
+let NQL = Couchbase.N1qlQuery;
+
+orders.manager().createPrimaryIndex(() => {
+  orders.upsert('id:Friday,Fri Jul 20 2018', {
+    'userId': 'L33Tc0d3',
+    'direction': 'B',
+    'date': 'Sun Jul 15 2018'
+
+  });
+});
+
+const millisecondsTS = Date.parse(input);
+desiredDate = new Date(millisecondsTS);
+
 
 const slackConfig = config.get('slack');
 
 const findMatchingOrder = (date, type) => {
-  const matchingDirection = (type === 'offer') ? 'B' : 'S';
+  const direction = (type === 'offer') ? 'B' : 'S';
   let matches = [];
   // search database by date
-  
+  results = orders.query(NQL.fromString(`SELECT META(order).id, order.* FROM orders AS order WHERE order.id LIKE $date AND order.direction = $direction`), {
+    'date': date,
+    'direction': direction,
+  }, (err, result) => {
+    if (errO)
+  })
 
   return matches;
 };
@@ -17,10 +40,19 @@ export default async (options) => {
   try {
     const { slackReqObj } = options;
     const orderDate = slackReqObj.actions[0].selected_options[0].value;
-    const orderType = slackReqObj.callback_id;
+    const orderDateTS = new Date(orderDate).toISOString();
+=   const orderType = slackReqObj.callback_id;
+    const orderDirection = (orderType === 'offer') ? 'S' : 'B';
     const userId = slackReqObj.userId;
+    const now = new Date();
 
-    const matchingOrderType = orderType === 'offer' ? 'request' : orderType;
+    orders.upsert(`${orderDateTS}:${Date.parse(now)}`, {
+      'userId': userId,
+      'direction': orderDirection,
+      'date': orderDate,
+    });
+
+    const matchingOrderType = (orderDirection === 'S') ? 'B' : 'S';
     const matchingOrder = findMatchingOrder(orderDate, orderType)[0];
 
     const response;
