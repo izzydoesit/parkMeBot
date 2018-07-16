@@ -1,6 +1,101 @@
 import bodyParser from 'body-parser';
 import { log } from './utils';
 import routes from './routes';
+import Couchbase from 'couchbase';
+const NQL = Couchbase.N1qlQuery;
+import ExpressGraphQL from 'express-graphql';
+import { buildSchema } from 'graphql';
+import UUID from 'uuid';
+import { resolve } from 'dns';
+import { runInNewContext } from 'vm';
+
+const schema = buildSchema(`
+  type Query {
+    order(id: String!): [Order],
+    orders: [Order],
+    bids(direction: String!): [Order],
+    offers: [Order],
+    matchOrder: [Order]
+  }
+
+  type Order {
+    id: String,
+    userId: String!,
+    direction: String!,
+    date: String!
+  }
+
+  type Mutation {
+    createOrder(id: String, userId: String, direction: String!, date: String!): Order
+  }
+`);
+
+let resolvers = {
+
+  order: (data) => {
+    const id = data.id;
+    return new Promise((resolve, reject) => {
+      orderPool.get(id, (error, result) => {
+        if (error) return reject(error);
+        resolve(result.value);
+      });
+    })
+  },
+
+  orders: () => {
+    const query = 'SELECT META(order).id, order.* FROM orders as order';
+    const nqlQuery = NQL.fromString(query);
+    return new Promise((resolve, reject) => {
+      orders.query(nqlQuery, (error, result) => {
+        if (error) reject(error);
+        resolve(result)
+      })
+    })
+  },
+
+  bids: (data) => {
+    const query = "SELECT META(order).id, order.*  FROM orders as order WHERE order.direction = 'B'";
+    const nqlQuery = NQL.fromString(query);
+    return new Promise((resolve, reject) => {
+      orders.query(nqlQuery, (error, result) => {
+        if (error) reject(error);
+        resolve(result)
+      })
+    })
+  },
+
+  offers: (data) => {
+    const query = "SELECT META(order).id, order.*  FROM orders as order WHERE order.direction = 'S'";
+    const nqlQuery = NQL.fromString(query);
+    return new Promise((resolve, reject) => {
+      orders.query(nqlQuery, (error, result) => {
+        if (error) reject(error);
+        resolve(result)
+      })
+    })
+  },
+
+  matchOrder: (data) => {
+    const query = `SELECT META(order).id, order.* FROM orders AS order where order.date = $date AND order.direction = $direction`;
+    const nqlString = NQL.fromString(query);
+    return new Promise((resolve, reject) => {
+      orderPool.query(nqlString, { date: data.date, direction: data.direction }, (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      });
+    });
+  },
+
+  createOrder: (data) => {
+    const id = UUID.v4();
+    return new Promise((resolve, reject) => {
+      orderPool.insert(id, data, (error, result) => {
+        if (error) return reject(error);
+        resolve({ "id": id });
+      })
+    })
+  }
+};
 
 export default function (app) {
   app.use(bodyParser.json());
@@ -8,6 +103,13 @@ export default function (app) {
 
   // Routes
   app.use(routes);
+
+  // DB
+  app.use('/graphql', ExpressGraphQL({
+    schema: schema,
+    rootValue: resolvers,
+    graphiql: true,
+  }));
 
   // 404
   app.use((req, res) => {
