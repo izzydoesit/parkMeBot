@@ -1,13 +1,11 @@
 import bodyParser from 'body-parser';
 import { log } from './utils';
 import routes from './routes';
+import { buildSchema } from 'graphql';
+import ExpressGraphQL from 'express-graphql';
+import UUID from 'uuid';
 import Couchbase from 'couchbase';
 const NQL = Couchbase.N1qlQuery;
-import ExpressGraphQL from 'express-graphql';
-import { buildSchema } from 'graphql';
-import UUID from 'uuid';
-import { resolve } from 'dns';
-import { runInNewContext } from 'vm';
 
 const schema = buildSchema(`
   type Query {
