@@ -1,7 +1,7 @@
 import { log, writeToCsv } from '../../utils';
 
 // GENERATES MOCK RECORDS UP TO AMOUNT OF TOTAL ORDERS
-const generateData = async ({ startDate, endDate, totalOrders, direction }) => {
+export const generateOrderData = async ({ startDate, endDate, totalOrders, direction }) => {
   try {
     const parkingOrders = [];
     for (let index = 0; index < totalOrders; index += 1) {
@@ -22,7 +22,7 @@ const generateData = async ({ startDate, endDate, totalOrders, direction }) => {
   }
 };
 
-// GENERATES CSV VILE OF MOCKED ORDERS
+// GENERATES CSV FILE OF MOCKED ORDERS
 export default async (options) => {
   try {
     const {
@@ -34,7 +34,7 @@ export default async (options) => {
     } = options;
 
     const direction = (orderType == 'offer') ? 'S' : 'B';
-    const parkingOrders = await generateData({
+    const parkingOrders = await generateOrderData({
       startDate,
       endDate,
       totalOrders,
