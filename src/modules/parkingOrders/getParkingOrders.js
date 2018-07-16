@@ -33,7 +33,7 @@ export default async (options) => {
       orderReportFilePath,
     } = options;
 
-    const direction = (orderType == 'offers') ? 'S' : 'B';
+    const direction = (orderType == 'offer') ? 'S' : 'B';
     const parkingOrders = await generateData({
       startDate,
       endDate,
@@ -58,8 +58,7 @@ export default async (options) => {
 
       const filePath = orderReportFilePath;
       writeToCsv({ headers, records: orders, filePath });
-      const dir = direction === 'S' ? 'offer' : 'bid';
-      log.info(`${orders.length} parking spot ${dir} orders compiled into ${filePath}`);
+      log.info(`${orders.length} parking spot ${orderType} orders compiled into ${filePath}`);
     }
   } catch (err) {
     throw err;
