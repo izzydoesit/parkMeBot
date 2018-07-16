@@ -1,5 +1,5 @@
 import fs from 'fs';
-import path, { parse } from 'path';
+import path from 'path';
 import config from 'config';
 import csvWriter from 'csv-write-stream';
 import morgan from 'morgan';
@@ -44,12 +44,12 @@ export const writeToCsv = ({ headers, records, filePath }) => {
   writer.end();
 };
 
-export const getListFilesDir = () => {
-  let listFilesDir;
+export const getParkingOrderFilesDir = () => {
+  let parkingOrderFilesDir;
   try {
-    listFilesDir = path.join(__dirname, `../${config.get('listFilesDir')}`);
-    mkdirp.sync(listFilesDir);
-    return listFilesDir;
+    parkingOrderFilesDir = path.join(__dirname, `../${config.get('parkingOrderFilesDir')}`);
+    mkdirp.sync(parkingOrderFilesDir);
+    return parkingOrderFilesDir;
   } catch (err) {
     throw err;
   }
