@@ -40,6 +40,41 @@ export const postChatMessage = message => new Promise((resolve, reject) => {
   });
 });
 
+export const sendDirectMessage = message => new Promise((resolve, reject) => {
+  const {
+    url,
+    channel = null,
+    text = null,
+    attachments = null,
+    replaceOriginal = null,
+  } = message;
+
+  const payload = {
+    response_type: 'direct_message',
+  };
+
+  if (text !== null) payload.text = text;
+  if (attachments !== null) payload.attachments = attachments;
+  if (replaceOriginal !== null) payload.replaceOriginal = replaceOriginal;
+
+  request.post({
+    url: url,
+    body: payload,
+    json: true,
+  }, (err, response, body) => {
+    if (err) {
+      reject(err);
+    } else if (response.statusCode !== 200) {
+      reject(body);
+    } else if (body.ok !== true) {
+      const bodyString = JSON.stringify(body);
+      reject(new Error(`Got non ok response while posting chat message. Body -> ${bodyString}`));
+    } else {
+      resolve(body);
+    }
+  })
+})
+
 export const uploadFile = options => new Promise((resolve, reject) => {
   const {
     filePath,
