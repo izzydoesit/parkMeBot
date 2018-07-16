@@ -1,5 +1,8 @@
-import path from 'path';
 import config from 'config';
+const result = require('dotenv').config();
+if (result.error) {
+  throw result.error;
+}
 
 import {
   log,
@@ -17,13 +20,13 @@ import getCalendarDays from './getCalendarDays';
 const slackConfig = config.get('slack');
 
 const PARKING_ORDERS_CONFIG = {
-  offers: {
+  offer: {
     name: 'Parking Spot Offers',
     namePrefix: 'parkingOffers',
     type: 'csv',
     func: getParkingOrders,
   },
-  bids: {
+  bid: {
     name: 'Parking Spot Bids',
     namePrefix: 'parkingBids',
     type: 'csv',
@@ -107,7 +110,7 @@ const generateOrderReportImplAsync = async (options, { slackReqObj }) => {
         responseUrl: slackReqObj.response_url,
         replaceOriginal: false,
         text: `There's currently no orders available for *${orderReportName}*`,
-        mrkdwnn: true,
+        mrkdwn: true,
         mrkdwn_in: ['text'],
       };
       return postChatMessage(message)
