@@ -6,7 +6,6 @@ const generateData = async ({ startDate, endDate, totalOrders, direction }) => {
     const parkingOrders = [];
     for (let index = 0; index < totalOrders; index += 1) {
       const rand = Math.floor(Math.random() * 7) + 1;
-      const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
       const randomDay = new Date();
       randomDay.setDate(randomDay.getDate() + rand);
 
@@ -14,7 +13,6 @@ const generateData = async ({ startDate, endDate, totalOrders, direction }) => {
         id: Math.floor(Math.random() * 25),
         direction: direction,
         username: `user_${index + 1}`,
-        day: days[randomDay.getDay()],
         date: randomDay,
       });
     }
@@ -48,7 +46,6 @@ export default async (options) => {
         'Order Id',
         'Direction',
         'Username',
-        'Day',
         'Date',
       ];
 
@@ -56,7 +53,6 @@ export default async (options) => {
         order.id,
         order.direction,
         order.username,
-        order.day,
         order.date,
       ]);
 
