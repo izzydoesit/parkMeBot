@@ -2,7 +2,10 @@ import Botkit from 'botkit';
 
 const controller = Botkit.anywhere(configuration);
 
-controller.hears('hello','direct_message', (bot, message) => {
+controller.hears(
+    ['hello', 'hi', 'yo', 'what\'s up'],
+    ['direct_message', 'mention', 'direct_mention'], 
+    (bot, message) => {
     bot.reply(message,'Hello yourself!');
 });
 
