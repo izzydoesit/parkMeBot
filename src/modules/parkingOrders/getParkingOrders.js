@@ -26,7 +26,6 @@ const generateData = async ({ startDate, endDate, totalOrders, direction }) => {
 
 // GENERATES CSV VILE OF MOCKED ORDERS
 export default async (options) => {
-  console.log('options', options)
   try {
     const {
       startDate = '2018-01-01',

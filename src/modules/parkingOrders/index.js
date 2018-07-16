@@ -71,7 +71,7 @@ export const generateOrderReport = async (options) => {
         return orderReport.func({ orderType, orderReportFilePath });
       }
     };
-    console.log('params', orderReportParams)
+
     // Begin async order report generation
     generateOrderReportImplAsync(orderReportParams, { slackReqObj });
 
