@@ -4,6 +4,7 @@ import {
   orderTypesList,
   generateOrderReport,
   calendarDaysList,
+  submitOrder,
 } from './modules/parkingOrders';
 
 const router = new express.Router();
@@ -47,9 +48,9 @@ router.post('/slack/command/parkme', async (req, res) => {
         fallback: 'What day would you like to park?',
         color: '#2c963f',
         attachment_type: 'default',
-        callback_id: 'calendar_selection',
+        callback_id: 'bid_date_selection',
         actions: [{
-          name: 'date_select_menu',
+          name: 'bid_date_select_menu',
           text: 'choose a date...',
           type: 'select',
           options: calendarDaysList,
@@ -74,9 +75,9 @@ router.post('/slack/command/rentspot', async (req, res) => {
         fallback: 'What day would you like to offer parking?',
         color: '#2c963f',
         attachment_type: 'default',
-        callback_id: 'calendar_selection',
+        callback_id: 'offer_date_selection',
         actions: [{
-          name: 'date_select_menu',
+          name: 'offer_date_select_menu',
           text: 'choose a date...',
           type: 'select',
           options: calendarDaysList,
@@ -92,11 +93,12 @@ router.post('/slack/command/rentspot', async (req, res) => {
 router.post('/slack/actions', async (req, res) => {
   try {
     const slackReqObj = JSON.parse(req.body.payload);
+    const id = slackReqObj.callback_id;
     let response;
 
-    if (slackReqObj.callback_id === 'calendar_selection') {
+    if (id === 'bid_date_selection' || id === 'offer_date_selection') {
       response = await submitOrder({ slackReqObj });
-    } else if (slackReqObj.callback_id === 'order_type_selection') {
+    } else if (id === 'order_type_selection') {
       response = await generateOrderReport({ slackReqObj });
     }
     return res.json(response);
