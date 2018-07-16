@@ -34,6 +34,7 @@
     "botkit": "^0.6.15",
     "botkit-storage-mongo": "^1.0.7",
     "config": "^1.30.0",
+    "couchbase": "^2.4.6",
     "csv-write-stream": "^2.0.0",
     "debug": "^3.1.0",
     "dotenv": "^6.0.0",
@@ -41,12 +42,15 @@
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-plugin-import": "^2.13.0",
     "express": "^4.16.3",
+    "express-graphql": "^0.6.12",
+    "graphql": "^0.13.2",
     "hoek": "^5.0.3",
     "lodash": "^4.17.10",
     "mkdirp": "^0.5.1",
     "mongodb": "^3.1.1",
     "morgan": "^1.9.0",
     "request": "^2.87.0",
-    "tracer": "^0.9.1"
+    "tracer": "^0.9.1",
+    "uuid": "^3.3.2"
   }
 }
