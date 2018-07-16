@@ -12,7 +12,6 @@ import {
 import { postChatMessage, uploadFile } from '../slack';
 // Parking Spots
 import getParkingOrders from './getParkingOrders';
-import getParkingBids from './getParkingBids';
 import getCalendarDays from './getCalendarDays';
 
 const slackConfig = config.get('slack');
@@ -34,11 +33,11 @@ const PARKING_ORDERS_CONFIG = {
 
 export const orderTypesList = Object.entries(PARKING_ORDERS_CONFIG)
 .map(([key, value]) => {
-  const list = {
+  const orderType = {
     text: value.name,
     value: key,
   };
-  return list;
+  return orderType;
 });
 
 export const generateOrderReport = async (options) => {
@@ -159,13 +158,4 @@ const generateOrderReportImplAsync = async (options, { slackReqObj }) => {
   }
 };
 
-// const CALENDAR_DAYS_CONFIG = getCalendarDays({ startDate, endDate, totalDays: 7 })
-
-// export const calendarDaysList = Object.entries(CALENDAR_DAYS_CONFIG)
-// .map(([key, value]) => {
-//   const list = {
-//     text: `${value.day}, ${value.date}`,
-//     value: key,
-//   };
-//   return list;
-// });
+export const calendarDaysList = getCalendarDays(7);
