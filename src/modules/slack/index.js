@@ -1,6 +1,7 @@
 import fs from 'fs';
 import config from 'config';
 import request from 'request';
+import { log } from '../../utils';
 
 const slackConfig = config.get('slack');
 
@@ -13,7 +14,7 @@ export const postChatMessage = message => new Promise((resolve, reject) => {
     replaceOriginal = null,
   } = message;
 
-  const payload = {
+  let payload = {
     response_type: 'in_channel',
   };
 
@@ -47,15 +48,18 @@ export const sendDirectMessage = message => new Promise((resolve, reject) => {
     text = null,
     attachments = null,
     replaceOriginal = null,
+    mrkdwn = null,
+    mrkdwn_in = [],
   } = message;
 
-  const payload = {
-    response_type: 'direct_message',
-  };
+  let payload = {};
 
+  if (channel !== null) payload.channel = channel;
   if (text !== null) payload.text = text;
   if (attachments !== null) payload.attachments = attachments;
   if (replaceOriginal !== null) payload.replaceOriginal = replaceOriginal;
+  if (mrkdwn !== null) payload.mrkdwn = mrkdwn;
+  if (mrkdwn_in !== null) payload.mrkdwn_in = mrkdwn_in;
 
   request.post({
     url: url,
@@ -68,12 +72,12 @@ export const sendDirectMessage = message => new Promise((resolve, reject) => {
       reject(body);
     } else if (body.ok !== true) {
       const bodyString = JSON.stringify(body);
-      reject(new Error(`Got non ok response while posting chat message. Body -> ${bodyString}`));
+      reject(new Error(`Got non ok response while posting direct message. Body -> ${bodyString}`));
     } else {
       resolve(body);
     }
   })
-})
+});
 
 export const uploadFile = options => new Promise((resolve, reject) => {
   const {
