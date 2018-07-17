@@ -1,92 +1,98 @@
 import config from 'config';
 import path from 'path';
-const result = require('dotenv').config();
-if (result.error) {
-  throw result.error;
-}
+import mongoose from 'mongoose';
+mongoose.set('debug', true);
 
 import {
   log,
   delay,
-  offerExists,
-  bidExists,
   fileExists,
   getParkingOrderFilesDir,
 } from '../../utils';
-import Couchbase from 'couchbase';
-const cluster = new Couchbase.Cluster('couchbase://localhost:8000');
-let orders = cluster.openBucket('orders');
-let NQL = Couchbase.N1qlQuery;
 import { postChatMessage, sendDirectMessage, uploadFile } from '../slack';
-// Parking Spots
 import getParkingOrders from './getParkingOrders';
 import getCalendarDays from './getCalendarDays';
-import { resolve } from 'url';
 
 const slackConfig = config.get('slack');
 
-const findMatchingOrder = (date, type) => {
-  const direction = (type === 'offer') ? 'B' : 'S';
-  let matches = [];
-  // search database by date
-  results = orders.query(NQL.fromString(`SELECT META(order).id, order.* FROM orders AS order WHERE order.id LIKE $date AND order.direction = $direction LIMIT 1`), {
-    'date': date,
-    'direction': direction,
-  }, (err, result) => {
-    if (err) throw err;
-    resolve(result.value);
-  })
+const Schema = mongoose.Schema;
+const OrderSchema = new Schema({
+  id: String,
+  userId: String,
+  direction: String,
+  date: String,
+});
+const Order = mongoose.model('Order', OrderSchema);
 
-  return matches;
+const findMatchingOrder = async (date, type) => {
+  try {
+    // search database by date + direction
+    const direction = (type === 'offer') ? 'B' : 'S';
+    const matchOrder = Order.findOne({}, (err, item) => {
+      if (err) return log.error(err);
+    });
+
+    const results = await matchOrder.where({ 
+      date, 
+      direction 
+    }, (err, match) => {
+      if (err) return log.error(err);
+      log.info('Found matching order', match);
+    });
+
+    if (results) {
+      log.info('Matched order with %s on %s in %s direction.', results.userId, results.date, results.direction);
+    } else {
+      return log.error('Something went wrong searching for your order', results);
+    }
+    return results;
+  } catch (err) {
+    throw err;
+  }
 };
 
 // Write order to database & check for matching order
 export const submitOrder = async (options) => {
   try {
-    console.log('IN SUBMIT ORDER')
+    // console.log('IN SUBMIT ORDER')
     const { slackReqObj } = options;
-    console.log('slack obj', slackReqObj);
+    // console.log('slack obj', slackReqObj);
     const orderDate = slackReqObj.actions[0].selected_options[0].value;
     const orderDateTS = new Date(orderDate).toISOString();
-    const orderType = slackReqObj.callback_id;
+    const orderType = slackReqObj.callback_id.split('_')[0];
     const orderDirection = (orderType === 'offer') ? 'S' : 'B';
-    const userId = slackReqObj.userId;
+    const matchingOrderType = (orderType === 'offer') ? 'request' : 'offer';
+    const userId = slackReqObj.user.id;
     const now = new Date();
 
-    orders.upsert(`${orderDateTS}:${Date.parse(now)}`, {
-      'userId': userId,
-      'direction': orderDirection,
-      'date': orderDate,
-    }, (err, result) => {
-      if (err) throw err;
-      resolve(result.value);
+    const newOrder = new Order({
+      id: `${orderDateTS}:${Date.parse(now)}`,
+      userId,
+      direction: orderDirection,
+      date: orderDate,
     });
+    
+    newOrder.save(((err) => {
+      if (err) return err;
+      log.info(`Your ${orderType} for ${orderDate} has been saved!`)
+    }));
 
-    const matchingOrder = findMatchingOrder(orderDate, orderDirection)[0];
+    const matchingOrder = await findMatchingOrder(orderDate, orderDirection);
 
-    let response;
-    if (matchingOrder.length < 1) {
-      response = {
-        response_type: 'in_channel',
-        text: `Thanks for your offer. We don't have any matching parking spot ${matchingOrderType}s right now, but we'll let you know when one becomes available.`,
-      };
-      return postChatMessage(response)
-        .catch((err) => {
-          log.error(err);
-        });
-    } else {
-      const matchingUserId = matchingOrder.userId;
-      response = {
-        response_type: 'in_channel',
-        text: `Thanks. Hey, I have great news, we found a matching ${matchingOrderType}. We'll message you two directly.`,
-      };
-      return postChatMessage(response)
-      .catch((err) => {
-        log.error(err);
-      });
+    let response = { 
+      responseUrl: slackReqObj.response_url,
+      replaceOriginal: false,
+      mrkdwn: true,
+      mrkdwn_in: ['text'],
+    };
 
+    if (matchingOrder !== null) {
+      response.text = `Hey, I have great news! :tada: :clap: We found a matching ${matchingOrderType}. :smiley: We'll message you two directly...`;
+      
       // send direct message to user and matching order user
-      const url = `https://slack.com/api/conversations.open?token=${process.env.SLACK_BOT_TOKEN}&return_im=true&users=${userId}%2C%20${matchingUserId}&pretty=1`;
+      const matchingUserId = matchingOrder.userId;
+      const botToken = config.slack.parkMeBot.botToken;
+      const url = `https://slack.com/api/conversations.open?token=${botToken}&return_im=true&users=${matchingUserId}&pretty=1`;
       const intro = `Seems like you two have a lot to talk about! You're both interested in exchanging parking on ${orderDate}. Enjoy that spot!`
       const message = {
         url: url,
@@ -95,9 +101,12 @@ export const submitOrder = async (options) => {
         mrkdwn: true,
         mrkdwn_in: ['text'],
       };
-      return sendDirectMessage(message).catch((ex) => {
-        log.error(ex);
+      sendDirectMessage(message)
+        .catch((ex) => {
+          log.error(ex);
       });
+    } else {
+      response.text = `Thanks for your offer. :heart_eyes: We don't have any matching parking spot ${matchingOrderType}s right now, but we'll let you know as soon as one becomes available. :+1:`;
     }
     return response;
   } catch (err) {
