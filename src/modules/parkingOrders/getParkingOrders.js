@@ -2,6 +2,7 @@ import { log, writeToCsv } from '../../utils';
 
 // GENERATES MOCK RECORDS UP TO AMOUNT OF TOTAL ORDERS
 export const generateOrderData = async ({ startDate, endDate, totalOrders, direction }) => {
+  
   try {
     const parkingOrders = [];
     for (let index = 0; index < totalOrders; index += 1) {
@@ -11,7 +12,7 @@ export const generateOrderData = async ({ startDate, endDate, totalOrders, direc
 
       parkingOrders.push({
         id: Math.floor(Math.random() * 25),
-        direction: direction,
+        direction,
         username: `user_${index + 1}`,
         date: randomDay,
       });
@@ -33,12 +34,12 @@ export default async (options) => {
       orderReportFilePath,
     } = options;
 
-    const direction = (orderType == 'offer') ? 'S' : 'B';
+    const direction = (orderType === 'offer') ? 'S' : 'B';
     const parkingOrders = await generateOrderData({
       startDate,
       endDate,
       totalOrders,
-      direction
+      direction,
     });
 
     if (parkingOrders.length > 0) {
