@@ -1,6 +1,6 @@
 import express from 'express';
 import { log } from './utils';
-import { 
+import {
   orderTypesList,
   generateOrderReport,
   calendarDaysList,

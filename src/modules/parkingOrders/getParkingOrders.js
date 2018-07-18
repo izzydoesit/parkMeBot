@@ -1,8 +1,12 @@
 import { log, writeToCsv } from '../../utils';
 
 // GENERATES MOCK RECORDS UP TO AMOUNT OF TOTAL ORDERS
-export const generateOrderData = async ({ startDate, endDate, totalOrders, direction }) => {
-  
+export const generateOrderData = async ({
+  startDate,
+  endDate,
+  totalOrders,
+  direction,
+}) => {
   try {
     const parkingOrders = [];
     for (let index = 0; index < totalOrders; index += 1) {

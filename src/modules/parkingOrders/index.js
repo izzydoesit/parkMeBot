@@ -1,8 +1,6 @@
-import config from 'config';
+import config, { botToken } from 'config';
 import path from 'path';
-import mongoose from 'mongoose';
-mongoose.set('debug', true);
-
+import mongoose, { Schema } from 'mongoose';
 import {
   log,
   delay,
@@ -15,7 +13,7 @@ import getCalendarDays from './getCalendarDays';
 
 const slackConfig = config.get('slack');
 
-const Schema = mongoose.Schema;
+mongoose.set('debug', true);
 const OrderSchema = new Schema({
   id: String,
   userId: String,
@@ -30,14 +28,15 @@ const findMatchingOrder = async (date, type) => {
     const direction = (type === 'offer') ? 'B' : 'S';
     const matchOrder = Order.findOne({}, (err, item) => {
       if (err) return log.error(err);
+      return log.info('Found matching item in database:', item);
     });
 
-    const results = await matchOrder.where({ 
-      date, 
-      direction 
+    const results = await matchOrder.where({
+      date,
+      direction,
     }, (err, match) => {
       if (err) return log.error(err);
-      log.info('Found matching order', match);
+      return log.info('Found matching order', match);
     });
 
     if (results) {
@@ -71,15 +70,15 @@ export const submitOrder = async (options) => {
       direction: orderDirection,
       date: orderDate,
     });
-    
+
     newOrder.save(((err) => {
       if (err) return err;
-      log.info(`Your ${orderType} for ${orderDate} has been saved!`)
+      return log.info(`Your ${orderType} for ${orderDate} has been saved!`);
     }));
 
     const matchingOrder = await findMatchingOrder(orderDate, orderDirection);
 
-    let response = { 
+    const response = {
       responseUrl: slackReqObj.response_url,
       replaceOriginal: false,
       mrkdwn: true,
@@ -88,14 +87,13 @@ export const submitOrder = async (options) => {
 
     if (matchingOrder !== null) {
       response.text = `Hey, I have great news! :tada: :clap: We found a matching ${matchingOrderType}. :smiley: We'll message you two directly...`;
-      
+
       // send direct message to user and matching order user
       const matchingUserId = matchingOrder.userId;
-      const botToken = config.slack.parkMeBot.botToken;
       const url = `https://slack.com/api/conversations.open?token=${botToken}&return_im=true&users=${matchingUserId}&pretty=1`;
-      const intro = `Seems like you two have a lot to talk about! You're both interested in exchanging parking on ${orderDate}. Enjoy that spot!`
+      const intro = `Seems like you two have a lot to talk about! You're both interested in exchanging parking on ${orderDate}. Enjoy that spot!`;
       const message = {
-        url: url,
+        url,
         replaceOriginal: false,
         text: intro,
         mrkdwn: true,
@@ -104,7 +102,7 @@ export const submitOrder = async (options) => {
       sendDirectMessage(message)
         .catch((ex) => {
           log.error(ex);
-      });
+        });
     } else {
       response.text = `Thanks for your offer. :heart_eyes: We don't have any matching parking spot ${matchingOrderType}s right now, but we'll let you know as soon as one becomes available. :+1:`;
     }
@@ -130,13 +128,13 @@ const PARKING_ORDERS_CONFIG = {
 };
 
 export const orderTypesList = Object.entries(PARKING_ORDERS_CONFIG)
-.map(([key, value]) => {
-  const orderType = {
-    text: value.name,
-    value: key,
-  };
-  return orderType;
-});
+  .map(([key, value]) => {
+    const orderType = {
+      text: value.name,
+      value: key,
+    };
+    return orderType;
+  });
 
 export const generateOrderReport = async (options) => {
   try {
@@ -166,7 +164,7 @@ export const generateOrderReport = async (options) => {
       orderReportFilePath,
       orderReportFunc() {
         return orderReport.func({ orderType, orderReportFilePath });
-      }
+      },
     };
 
     // Begin async order report generation
@@ -248,7 +246,7 @@ const generateOrderReportImplAsync = async (options, { slackReqObj }) => {
       mrkdwn: true,
       mrkdwn_in: ['text'],
     };
-    
+
     return postChatMessage(message)
       .catch((ex) => {
         log.error(ex);

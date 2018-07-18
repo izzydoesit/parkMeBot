@@ -14,7 +14,7 @@ export const postChatMessage = message => new Promise((resolve, reject) => {
     replaceOriginal = null,
   } = message;
 
-  let payload = {
+  const payload = {
     response_type: 'in_channel',
   };
 
@@ -29,6 +29,7 @@ export const postChatMessage = message => new Promise((resolve, reject) => {
     json: true,
   }, (err, response, body) => {
     if (err) {
+      log.error(err);
       reject(err);
     } else if (response.statusCode !== 200) {
       reject(body);
@@ -48,25 +49,22 @@ export const sendDirectMessage = message => new Promise((resolve, reject) => {
     text = null,
     attachments = null,
     replaceOriginal = null,
-    mrkdwn = null,
-    mrkdwn_in = [],
   } = message;
 
-  let payload = {};
+  const payload = {};
 
   if (channel !== null) payload.channel = channel;
   if (text !== null) payload.text = text;
   if (attachments !== null) payload.attachments = attachments;
   if (replaceOriginal !== null) payload.replaceOriginal = replaceOriginal;
-  if (mrkdwn !== null) payload.mrkdwn = mrkdwn;
-  if (mrkdwn_in !== null) payload.mrkdwn_in = mrkdwn_in;
 
   request.post({
-    url: url,
+    url,
     body: payload,
     json: true,
   }, (err, response, body) => {
     if (err) {
+      log.error(err);
       reject(err);
     } else if (response.statusCode !== 200) {
       reject(body);
@@ -76,7 +74,7 @@ export const sendDirectMessage = message => new Promise((resolve, reject) => {
     } else {
       resolve(body);
     }
-  })
+  });
 });
 
 export const uploadFile = options => new Promise((resolve, reject) => {
@@ -103,6 +101,7 @@ export const uploadFile = options => new Promise((resolve, reject) => {
     json: true,
   }, (err, response, body) => {
     if (err) {
+      log.error(err);
       reject(err);
     } else if (response.statusCode !== 200) {
       reject(body);

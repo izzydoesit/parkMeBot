@@ -1,13 +1,18 @@
 import Botkit from 'botkit';
+import config from 'config';
 
-const controller = Botkit.anywhere(config);
+const controller = Botkit.slackbot({
+  clientId: config.slack.parkMeBot.clientId,
+  clientSecret: config.slack.parkMeBot.clientSecret,
+  scopes: ['bot'],
+});
 
 controller.hears(
   ['hello', 'hi', 'yo', 'what\'s up'],
   ['direct_message', 'mention', 'direct_mention'],
   (bot, message) => {
     bot.reply(message, 'Hello yourself!');
-  }
+  },
 );
 
 controller.hears('parking', 'in_channel', (bot, message) => {
