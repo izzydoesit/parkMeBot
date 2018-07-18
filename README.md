@@ -35,7 +35,7 @@ If you'd rather not wait, you can also get a CSV file full of parking spot reque
 
 ## Key decisions
 
-* *Designed with User Experience first*
+* **Designed with User Experience first**
 
   Our workspace bot attempts to solve a real-life problem that plagues our car-centric culture, especially in the local SF Bay area where parking is in high demand and prices are even higher.
 
@@ -43,7 +43,7 @@ If you'd rather not wait, you can also get a CSV file full of parking spot reque
 
   _Slash commands_ seemed like the clear way to go in this case since they can be invoked from any channel without needing the bot to be a member and listening in on that channel. This option also fit in well with our goal of designing and implementing a ubiquitous parking solution that can serve all the members of the workspace from anywhere in the Slack application.
 
-* *Persisting orders*
+* **Persisting orders**
 
   The parkMeBot aims to be the ongoing _one-stop solution_ for all your parking spot-trading needs at work. As such, saving orders in a database for later querying and retrieval became necessary. This decision is key as we built with scale in mind. There might not be any matching orders at any given time when a user submits an order so the need for _persistence_ became clear in order to better serve the workspace's members over multiple interactions.
 
@@ -54,30 +54,30 @@ If you'd rather not wait, you can also get a CSV file full of parking spot reque
 
 ## Testing Plan
 
-* *User flows*
+* **User flows**
 
-  * when user invokes bid/offer submitting flow in a channel, it should:
-    - receive POST request to command subendpoint
-    - respond with POST to same channel with:
+  * when user invokes *bid/offer submitting flow* in a channel, it should:
+    - receive POST request to __/command__ subendpoint
+    - _respond_ with POST to same channel with:
       - a friendly message
-      - one interactive select component with list of date options
-    - receive POST request to /actions endpoint with all necessary data
-    - respond to user action with confirmation message
-    - query database for matching order and return in confirmation message
-    - asynchronously insert order into database
+      - one interactive _select_ component with list of _date_ options
+    - receive POST request to __/actions__ endpoint with all necessary data
+    - respond to user action with _confirmation_ message
+    - _query_ database for matching order and return in confirmation message
+    - __asynchronously__ insert_ order into database
     
-  * when user invokes parking spot report request flow in channel, it should:
-    - receive POST request to command subendpoint
-    - respond with POST to same channel with:
+  * when user invokes *parking spot report request flow* in channel, it should:
+    - receive POST request to __/command__ subendpoint
+    - _respond_ with POST to same channel with:
       - a friendly message
-      - one interactive select component with list of order type options
-    - receive POST request to /actions endpoint with all necessary data
-    - respond to user action with confirmation message
-    - asynchronously generate CSV report of orders and save file locally
-    - asynchronously upload CSV file to specified upload channel
-    - notify user in channel report was requested when report has finished uploading
+      - one interactive _select_ component with list of _order type_ options
+    - receive POST request to __/actions__ endpoint with all necessary data
+    - respond to user action with _confirmation_ message
+    - __asynchronously__ _generate CSV_ report of orders and save file locally
+    - __asynchronously__ _upload CSV_ file to specified upload channel
+    - _notify user_ in channel report was requested when report has finished uploading
 
-* *Database*
+* **Database**
 
   * when inserting an order, it should:
     - require a __userId__ value
@@ -87,34 +87,34 @@ If you'd rather not wait, you can also get a CSV file full of parking spot reque
 
   * when querying the order pool, it should:
     - search by date first
-    - match only opposite direction of incoming order
-    - return only one match or empty array if none found
-    - if no match, should not remove *any* orders from order pool
-    - if matched, remove *BOTH* orders from order pool
+    - match only _opposite direction_ of incoming order
+    - return only __one__ match or empty array if none found
+    - if no match, should not remove **any** orders from order pool
+    - if matched, remove **BOTH** orders from order pool
     - both matched orders are no longer retrievable from database
     - update ALL master and slave databases (in case of db redundancy)
 
 ## Improvements
 
-* *Better flow for user experience*
+* **Better flow for user experience**
 
   Upon reflection, including two buttons instead of a select menu in our interactive component for our __/parkingspots__ command might have been better UX since a menu of only two options seems unnecessary. It also reduces user friction even more since it makes it **ONE** click instead of two in order to dispatch the command to fetch a CSV order report.
 
-* *Using local time vs UTC*
+* **Using local time vs UTC**
 
-  This was an issue I wrestled with in building this application and found it hard to justify using UTC time when it could easily interfere with generating list of days for a local user to pick from to submit a bid/offer on. If a user on PST time submitted a bid/offer after 5pm, the calendar day generating algorithm would skip a day in its process of generating the next 7 days to pick from.
+  This was an issue I wrestled with in building this application and found it hard to justify using UTC time when it could easily interfere with generating list of days for a local user to pick from to submit a bid/offer on. If a user on PST time submitted a bid/offer after 5pm, the calendar day generating algorithm would *skip a day* in its process of generating the next 7 days to pick from.
 
-  As the bot application scales, this range of days would be expanded out to months and involve a more complex interactive calendar component that doesn't currently exist.  If I had more time to work on this application, this would be the first thing I would build in order to give my users a wider array of choices.
+  As the bot application scales, this range of days would be expanded out to months and involve a more complex *interactive calendar* component that doesn't currently exist.  If I had more time to work on this application, this would be the first thing I would build in order to give my users a wider array of choices.
 
-* *Indexing & Searching*
+* **Indexing & Searching**
 
-  As of right now, we are only querying the database when a new order comes in. This minimizes our searches to only when the database state changes. We could stand to improve our matching algorithm however, if we were dealing with large amounts of data.
+  As of right now, we are only querying the database when a new order comes in. This *minimizes* our searches to only when the database state changes. We could stand to improve our matching algorithm however, if we were dealing with large amounts of data.
   
   The matching algorithm currently searches by date field in the database, which is a string comprised of day and date for human readability. Given the current state of the app having only a one week range for its time window, this algorithm is simple and effective.  Searching for the date makes it easy to find an order's complement since only orders on that date can match with our incoming order at the time of query and there would be a much smaller pool of orders on any given date. 
   
   That leaves us with just having to match the opposite direction of the incoming order in order from among the pool of date-matched orders. We could add __indexing__ on this field in order to make it faster to search by date, and would be the first improvement I would make on the matching algorithm and database querying. 
 
-  I have also added an __id__ field that is composed of the desired date of the order as an ISO string and UNIX timestamp of when order was submitted. This was forward thinking on how to deal with the issue of multiple matching orders in database. I would complete this implementation by simply _resolving using timestamp_, implementing a first-in-first-out (FIFO) policy. This field could also be a possible indexing candidate
+  I have also included an __id__ field in our *model* that is composed of the desired date of the order as an ISO string and UNIX timestamp of when order was submitted. This was forward thinking on how to deal with the issue of multiple matching orders in database. I would complete this implementation by simply _resolving using timestamp_, implementing a first-in-first-out (FIFO) policy. This field could also be a possible indexing candidate
 
 ## Getting Started
 
@@ -156,8 +156,7 @@ $ npm start dev
 
 ### External Dependencies
 
-MongoLab hosted database
-Chuck Norris Jokes Api
+* MongoLab hosted database
 
 # Author
 * **Israel Matos** - ([Portfolio](https://www.israeldmatos.com) * [LinkedIn](https://linkedin.com/in/israedmatos) * [Github](https://github.com/izzydoesit))
