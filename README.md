@@ -1,8 +1,10 @@
 # @parkMeBot
 
-__the bot that finds you a spot!__
+__the Slack bot that finds you a spot!__
 
-![parkingSpot](slackParkingSpots.gif) ![parkMe](slackParkMe.gif)
+/parkingspots        |  /parkme 
+:-------------------------:|:-------------------------:
+![parkingSpot](slackParkingSpots.gif) | ![parkMe](slackParkMe.gif)
 
 ## Overview
 
