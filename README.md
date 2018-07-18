@@ -141,18 +141,18 @@ $ npm start dev
 
 ### Dependencies
 
-[Babel/ES6](http://babeljs.io) - JavaScript ES6 compiler
-[Body Parser](https://www.npmjs.com/package/body-parser) - Node.js request body parsing middleware
-[Botkit](https://botkit.ai) - bot making toolkit
-[Config](https://www.npmjs.com/package/config) - application configuration
-[CSV Write Stream](https://www.npmjs.com/package/csv-write-stream) - CSV encoder stream
-[ESLint](http://eslint.org) - JavaScript Linter (configured w/ AirBnB style guide)
-[Express](http://expressjs.com) - web application framework
-[Mkdirp](https://www.npmjs.com/package/mkdirp) - directory creating tool
-[Mongoose](http://mongoosejs.com) - database framework
-[Morgan](https://github.com/expressjs/morgan) - HTTP request logger middleware
-[Request](https://github.com/request/request) - HTTP request client
-[Tracer](https://babel.com) - logging library
+* [Babel/ES6](http://babeljs.io) - JavaScript ES6 compiler
+* [Body Parser](https://www.npmjs.com/package/body-parser) - Node.js request body parsing middleware
+* [Botkit](https://botkit.ai) - bot making toolkit
+* [Config](https://www.npmjs.com/package/config) - application configuration
+* [CSV Write Stream](https://www.npmjs.com/package/csv-write-stream) - CSV encoder stream
+* [ESLint](http://eslint.org) - JavaScript Linter (configured w/ AirBnB style guide)
+* [Express](http://expressjs.com) - web application framework
+* [Mkdirp](https://www.npmjs.com/package/mkdirp) - directory creating tool
+* [Mongoose](http://mongoosejs.com) - database framework
+* [Morgan](https://github.com/expressjs/morgan) - HTTP request logger middleware
+* [Request](https://github.com/request/request) - HTTP request client
+* [Tracer](https://babel.com) - logging library
 
 ### External Dependencies
 
