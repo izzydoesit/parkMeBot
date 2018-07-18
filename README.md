@@ -22,7 +22,7 @@ If you'd rather not wait, you can also get a CSV file full of parking spot reque
 
 ### Slash commands 
 
-* __/parkingspots__ command triggers a workflowsto get a report of all bid requests or offers for parking in CSV format uploaded to a channel.  
+* __/parkingspots__ command triggers a workflowsto get a report of all parking spot requests or offers in CSV format uploaded to the #parking channel.  
 
 * __/parkme__ command triggers bid-submitting user flow and lets you instantly if a matching offer is found. 
 * __/rentspot__, the previous command's complement, launches offer-submitting flow and also notifies you if there's a match.
