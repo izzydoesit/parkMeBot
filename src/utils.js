@@ -54,17 +54,3 @@ export const getParkingOrderFilesDir = () => {
     throw err;
   }
 };
-
-export const offerExists = async (date) => {
-  let exists = false;
-  // check pool for spots on day
-
-  return exists;
-};
-
-export const bidExists = async (date) => {
-  let exists = false;
-  // check pool for bids on day
-
-  return exists;
-};
