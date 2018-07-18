@@ -2,6 +2,8 @@
 
 __the bot that finds you a spot!__
 
+<div style="width:100%;height:0;padding-bottom:63%;position:relative;"><iframe src="https://giphy.com/embed/FDQLMhrlsEl47IPr50" width="100%" height="100%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div><p><a href="https://giphy.com/gifs/slack-chatbot-FDQLMhrlsEl47IPr50"></a></p>
+
 ## Overview
 
 Ever needed a __parking spot__ and wondered if your co-workers had any available?  Did you get the monthly parking pass at work and wish you could make some __extra cash__ when you weren't using your spot? 
