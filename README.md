@@ -2,7 +2,7 @@
 
 __the bot that finds you a spot!__
 
-<div style="width:100%;height:0;padding-bottom:63%;position:relative;"><iframe src="https://giphy.com/embed/FDQLMhrlsEl47IPr50" width="100%" height="100%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div><p><a href="https://giphy.com/gifs/slack-chatbot-FDQLMhrlsEl47IPr50"></a></p>
+![parkingSpot](slackParkingSpots.gif)
 
 ## Overview
 
@@ -158,7 +158,7 @@ $ npm start dev
 
 ### External Dependencies
 
-* MongoLab hosted database
+* [MongoLab](https://mlab.com) hosted database
 
 # Author
 * **Israel Matos** - ([Portfolio](https://www.israeldmatos.com) * [LinkedIn](https://linkedin.com/in/israedmatos) * [Github](https://github.com/izzydoesit))
