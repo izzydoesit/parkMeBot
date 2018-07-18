@@ -58,6 +58,16 @@ If you'd rather not wait, you can also get a CSV file full of parking spot reque
 
 ## Testing Plan
 
+The task of QA'ing this application will mostly be manual. I developed locally using [localtunnel](https://localtunnel.github.io) to be able to receive commands and actions to the Node server running on my local machine and tested the functionality of the code one piece at a time in isolation for typical unit testing before moving on to full integration testing.
+
+My testing and development made _heavy use of the logging_ functions made available by the [**Tracer**](https://github.com/baryon/tracer) module in order to know what was happening at every part of the code. I also made routine use of _passing error-handling callbacks_ to my asynchronous calls that would typically log errors first before any other logic.
+
+If i'm not able to access the source code while testing, as might be the case when testing someone else's production code, I would rely on _manual_ testing through the UI. In my testing, I would intentionally try to __break the application__ by trying all kinds of input and going through the flow repeatedly while trying every possible selection and clicking every possible interactive component in order to see the limits of the application. 
+
+For me, it's important to go through every possible **unique** user flow from end to end in order to fully test anything.  This is key because any flow you don't vet will certainly be discovered by a user, given enough time running on production. 
+
+With that in mind, i've outlined the key _assertions_ I would make while testing this application:
+
 * **User flows**
 
   * when user invokes *bid/offer submitting flow* in a channel, it should:
@@ -156,7 +166,7 @@ $ npm start dev
 * [Mongoose](http://mongoosejs.com) - database framework
 * [Morgan](https://github.com/expressjs/morgan) - HTTP request logger middleware
 * [Request](https://github.com/request/request) - HTTP request client
-* [Tracer](https://babel.com) - logging library
+* [Tracer](https://github.com/baryon/tracer) - logging library
 
 ### External Dependencies
 
