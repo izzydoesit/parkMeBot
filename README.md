@@ -2,7 +2,7 @@
 
 __the bot that finds you a spot!__
 
-![parkingSpot](slackParkingSpots.gif)
+![parkingSpot](slackParkingSpots.gif) ![parkMe](slackParkMe.gif)
 
 ## Overview
 
@@ -161,7 +161,7 @@ $ npm start dev
 * [MongoLab](https://mlab.com) hosted database
 
 # Author
-* **Israel Matos** - ([Portfolio](https://www.israeldmatos.com) * [LinkedIn](https://linkedin.com/in/israedmatos) * [Github](https://github.com/izzydoesit))
+* **Israel Matos** ([Portfolio](https://www.israeldmatos.com) | [LinkedIn](https://linkedin.com/in/israedmatos) | [Github](https://github.com/izzydoesit))
 
 # License
 
