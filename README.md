@@ -4,7 +4,7 @@ __the Slack bot that finds you a spot!__
 
 /parkingspots        |  /parkme 
 :-------------------------:|:-------------------------:
-![parkingSpot](slackParkingSpots.gif) | ![parkMe](slackParkMe.gif)
+![parkingSpot](parkingspots.gif) | ![parkMe](slackParkMe.gif)
 
 ## Overview
 
