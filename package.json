@@ -4,7 +4,7 @@
   "description": "\"The bot that helps you find a spot!\"",
   "main": ".dist/index.js",
   "scripts": {
-    "start": "./src/index.js",
+    "start": "src/index.js",
     "dev": "NODE_ENV=development babel-node src/index.js",
     "build": "rm -rf ./dist/ && babel src --out-dir dist/ --copy-files",
     "prod": "NODE_ENV=production node dist/index.js",
