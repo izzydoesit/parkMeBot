@@ -4,7 +4,7 @@ __the Slack bot that finds you a spot!__
 
 /parkingspots        |  /parkme 
 :-------------------------:|:-------------------------:
-![parkingSpot](parkingspots.gif) | ![parkMe](slackParkMe.gif)
+![parkingSpot](parkingSpotsCommand.gif) | ![parkMe](slackParkMe.gif)
 
 ## Overview
 
@@ -112,7 +112,7 @@ With that in mind, i've outlined the key _assertions_ I would make while testing
 
 * **Better flow for user experience**
 
-  Upon reflection, including two buttons instead of a select menu in our interactive component for our __/parkingspots__ command might have been better UX since a menu of only two options seems unnecessary. It also reduces user friction even more since it makes it **ONE** click instead of two in order to dispatch the command to fetch a CSV order report.
+  Improving the direct messaging functionality following a successful match after invoking __/parkme__ or __/rentspot__ command is the first thing I would work on if I had more time for this project. It makes for a great user experience to get a private message or invited to a private channel with just the other user you were matched with. The backend side of the application successfully persists orders and finds correct matches in the database, but unfortunately the user-facing functionality for this finishing touch in UX is not where I would ideally like it to be.
 
 * **Using local time vs UTC**
 
