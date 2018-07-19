@@ -167,7 +167,7 @@ export const generateOrderReport = async (options) => {
 
     const response = {
       response_type: 'in_channel',
-      text: `Got it :thumbsup: Generating requested order report *${orderReport.name}*\nI'll notify you when I'm done and upload it to <#CBS5YQ28L>.`,
+      text: `Got it :thumbsup: Generating requested order report *${orderReport.name}*\nI'll notify you when I'm done and upload it to <#CBTAUJ19B>.`,
       mrkdwn: true,
       mrkdwn_in: ['text'],
     };
@@ -219,7 +219,7 @@ const generateOrderReportImplAsync = async (options, { slackReqObj }) => {
     const message = {
       responseUrl: slackReqObj.response_url,
       replaceOriginal: false,
-      text: 'Your order report is ready and waiting for you in <#CBS5YQ28L> channel!',
+      text: 'Your order report is ready and waiting for you in <#CBTAUJ19B> channel!',
       attachmentns: [{
         text: `<${uploadedOrderReport.file.url_private}|${orderReportName}>`,
         color: '#2c963f',
