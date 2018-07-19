@@ -1,7 +1,6 @@
 import express from 'express';
 import { log } from './utils';
 import {
-  orderTypesList,
   generateOrderReport,
   calendarDaysList,
   submitOrder,
@@ -18,16 +17,26 @@ router.post('/slack/command/parkingspots', async (req, res) => {
       text: 'Hello :slightly_smiling_face:',
       attachments: [{
         text: 'What orders would you like to see?',
-        fallback: 'What orders would you like to see?',
+        fallback: 'I don\'t have any orders right now',
         color: '#2c963f',
         attachment_type: 'default',
         callback_id: 'order_type_selection',
-        actions: [{
-          name: 'order_types_select_menu',
-          text: 'choose an order type...',
-          type: 'select',
-          options: orderTypesList,
-        }],
+        actions: [
+          {
+            'name': 'order_type',
+            'text': 'Requests',
+            'color': '#22ee22',
+            'type': 'button',
+            'value': 'bids',
+          },
+          {
+            'name': 'order_type',
+            'text': 'Offers',
+            'style': 'danger',
+            'type': 'button',
+            'value': 'offers',
+          }
+        ],
       }],
     };
     return res.json(response);
