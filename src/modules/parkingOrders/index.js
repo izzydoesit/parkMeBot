@@ -113,13 +113,13 @@ export const submitOrder = async (options) => {
 };
 
 const PARKING_ORDERS_CONFIG = {
-  offer: {
+  offers: {
     name: 'Parking Spot Offers',
     namePrefix: 'parkingOffers',
     type: 'csv',
     func: getParkingOrders,
   },
-  bid: {
+  bids: {
     name: 'Parking Spot Bids',
     namePrefix: 'parkingBids',
     type: 'csv',
@@ -127,20 +127,14 @@ const PARKING_ORDERS_CONFIG = {
   },
 };
 
-export const orderTypesList = Object.entries(PARKING_ORDERS_CONFIG)
-  .map(([key, value]) => {
-    const orderType = {
-      text: value.name,
-      value: key,
-    };
-    return orderType;
-  });
-
 export const generateOrderReport = async (options) => {
   try {
     const { slackReqObj } = options;
-    const orderType = slackReqObj.actions[0].selected_options[0].value;
+    const orderType = slackReqObj.actions[0].value;
     const orderReport = PARKING_ORDERS_CONFIG[orderType];
+    const channel = `${slackReqObj.channel.id} -- ${slackReqObj.channel.domain}`;
+    const user = `${slackReqObj.user.id} -- ${slackReqObj.user.name}`;
+    log.info(`Generating order report for parking spot ${orderType} sent from ${channel} by ${user}`)
 
     if (orderReport === undefined) {
       const slackReqObjString = JSON.stringify(slackReqObj);
