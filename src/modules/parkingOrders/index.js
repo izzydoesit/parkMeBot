@@ -132,9 +132,10 @@ export const generateOrderReport = async (options) => {
     const { slackReqObj } = options;
     const orderType = slackReqObj.actions[0].value;
     const orderReport = PARKING_ORDERS_CONFIG[orderType];
-    const channel = `${slackReqObj.channel.id} -- ${slackReqObj.channel.domain}`;
-    const user = `${slackReqObj.user.id} -- ${slackReqObj.user.name}`;
-    log.info(`Generating order report for parking spot ${orderType} sent from ${channel} by ${user}`)
+    const team = `@${slackReqObj.team.domain} (${slackReqObj.team.id})`;
+    const channel = `#${slackReqObj.channel.name} (${slackReqObj.channel.id})`;
+    const user = `@${slackReqObj.user.name} (${slackReqObj.user.id})`;
+    log.info(`Generating order report for parking spot ${orderType} sent from ${team} in ${channel} by ${user}`)
 
     if (orderReport === undefined) {
       const slackReqObjString = JSON.stringify(slackReqObj);
@@ -166,7 +167,7 @@ export const generateOrderReport = async (options) => {
 
     const response = {
       response_type: 'in_channel',
-      text: `Got it :thumbsup: Generating requested order report *${orderReport.name}*\nI'll notify you when I'm done.`,
+      text: `Got it :thumbsup: Generating requested order report *${orderReport.name}*\nI'll notify you when I'm done and upload it to <#CBS5YQ28L>.`,
       mrkdwn: true,
       mrkdwn_in: ['text'],
     };
