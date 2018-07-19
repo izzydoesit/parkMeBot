@@ -19,13 +19,14 @@ router.post('/slack/command/parkingspots', async (req, res) => {
         text: 'What orders would you like to see?',
         fallback: 'I don\'t have any orders right now',
         color: '#2c963f',
+        mrkdwn_in: ['text'],
         attachment_type: 'default',
         callback_id: 'order_type_selection',
         actions: [
           {
             'name': 'order_type',
             'text': 'Requests',
-            'color': '#22ee22',
+            'style': 'primary',
             'type': 'button',
             'value': 'bids',
           },
