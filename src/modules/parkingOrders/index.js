@@ -219,7 +219,7 @@ const generateOrderReportImplAsync = async (options, { slackReqObj }) => {
     const message = {
       responseUrl: slackReqObj.response_url,
       replaceOriginal: false,
-      text: 'Your order report is ready!',
+      text: 'Your order report is ready and waiting for you in <#CBS5YQ28L> channel!',
       attachmentns: [{
         text: `<${uploadedOrderReport.file.url_private}|${orderReportName}>`,
         color: '#2c963f',
