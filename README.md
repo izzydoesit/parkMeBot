@@ -22,16 +22,16 @@ If you'd rather not wait, you can also get a CSV file full of parking spot reque
 
 ### Slash commands 
 
-* __/parkingspots__ command triggers a workflow to get a CSV-formatted report of all parking spot requests or offers uploaded to the #parking channel.  
+* __/parkingspots__ command triggers a workflow to get a CSV-formatted report of all parking spot requests or offers currently in the order pool uploaded to the #parking channel.  
 
 * __/parkme__ command triggers request-submitting user flow and lets you know instantly if a matching offer is found, or later when one becomes available. 
-* __/rentspot__, the previous command's complement, launches the offer-submitting flow and also notifies you immediately if there's a match.
+* __/rentspot__, the previous command's complement, launches the offer-submitting flow and also notifies you immediately if there's a match or later on when we receive a matching request.
 
 ### Interactive Components
 
   parkMeBot posts messages to channel (when invoked by the __/parkingspots__ slash command) with an interactive component containing two buttons to choose your report type from either requests or offers.
 
-  Also uses interactive select dropdown menu in response message to __/parkme__ and __/rentspot__ slash commands so user can pick from range of dates to submit their respoective parking spot bid or offer.
+  Also uses interactive select dropdown menu in response message to __/parkme__ and __/rentspot__ slash commands, so user can pick from range of dates to submit their respoective parking spot bid or offer.
 
 ### Bot User
 
