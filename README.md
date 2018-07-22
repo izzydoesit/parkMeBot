@@ -22,20 +22,20 @@ If you'd rather not wait, you can also get a CSV file full of parking spot reque
 
 ### Slash commands 
 
-* __/parkingspots__ command triggers a workflowsto get a report of all parking spot requests or offers in CSV format uploaded to the #parking channel.  
+* __/parkingspots__ command triggers a workflow to get a CSV-formatted report of all parking spot requests or offers uploaded to the #parking channel.  
 
-* __/parkme__ command triggers bid-submitting user flow and lets you instantly if a matching offer is found. 
-* __/rentspot__, the previous command's complement, launches offer-submitting flow and also notifies you if there's a match.
+* __/parkme__ command triggers request-submitting user flow and lets you know instantly if a matching offer is found, or later when one becomes available. 
+* __/rentspot__, the previous command's complement, launches the offer-submitting flow and also notifies you immediately if there's a match.
 
 ### Interactive Components
 
-  parkMeBot posts messages to channel (when invoked by slash command) with an interactive select dropdown menu to pick from either bids or offers for the /parkingspots command.
+  parkMeBot posts messages to channel (when invoked by the __/parkingspots__ slash command) with an interactive component containing two buttons to choose your report type from either requests or offers.
 
   Also uses interactive select dropdown menu in response message to __/parkme__ and __/rentspot__ slash commands so user can pick from range of dates to submit their respoective parking spot bid or offer.
 
 ### Bot User
 
-  We created a bot user so we could encapsulate our parking solution in one workspace entity capable of multiple functions and provides users a single access point for their parking needs. This creates a better user experience by personifying our application in a polished client-facing A.I. user.
+  We created a bot user so we could encapsulate our parking solution in one workspace entity capable of multiple functions and provides users a single access point for their parking needs. This creates a better user experience by personifying our application in a polished client-facing A.I.
 
 ## Key decisions
 
@@ -84,10 +84,10 @@ With that in mind, i've outlined the key _assertions_ I would make while testing
     - receive POST request to __/command__ subendpoint
     - _respond_ with POST to same channel with:
       - a friendly message
-      - one interactive _select_ component with list of _order type_ options
-    - receive POST request to __/actions__ endpoint with all necessary data
+      - one interactive _select_ component with two buttons for _order type_ selection
+    - receive POST request to __/actions__ endpoint with all necessary data (including report TYPE value)
     - respond to user action with _confirmation_ message
-    - __asynchronously__ _generate CSV_ report of orders and save file locally
+    - __asynchronously__ _generate CSV_ correct report of orders (requests or offers) and save file locally
     - __asynchronously__ _upload CSV_ file to specified upload channel
     - _notify user_ in channel report was requested when report has finished uploading
 
@@ -116,7 +116,7 @@ With that in mind, i've outlined the key _assertions_ I would make while testing
 
 * **Using local time vs UTC**
 
-  This was an issue I wrestled with in building this application and found it hard to justify using UTC time when it could easily interfere with generating list of days for a local user to pick from to submit a bid/offer on. If a user on PST time submitted a bid/offer after 5pm, the calendar day generating algorithm would *skip a day* in its process of generating the next 7 days to pick from.
+  This was an issue I wrestled with in building this application and found it hard to justify using UTC time when it could easily interfere with generating list of days for a local user to pick from to submit a request/offer on. If a user on PST time submitted a bid/offer after 5pm, the calendar day generating algorithm would *skip a day* in its process of generating the next 7 days to pick from.
 
   As the bot application scales, this range of days would be expanded out to months and involve a more complex *interactive calendar* component that doesn't currently exist.  If I had more time to work on this application, this would be the first thing I would build in order to give my users a wider array of choices.
 
@@ -150,7 +150,7 @@ Then run npm commands to install all dependencies and run the development server
 
 ```
 $ npm install
-$ npm start dev
+$ npm run dev
 ```
 
 ### Dependencies
