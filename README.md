@@ -58,55 +58,55 @@ If you'd rather not wait, you can also get a CSV file full of parking spot reque
 
 ## Testing Plan
 
-The task of QA'ing this application will mostly be manual. I developed locally using [localtunnel](https://localtunnel.github.io) to be able to receive commands and actions to the Node server running on my local machine and tested the functionality of the code one piece at a time in isolation for typical unit testing before moving on to full integration testing.
+  The task of QA'ing this application will mostly be manual. I developed locally using [localtunnel](https://localtunnel.github.io) to be able to receive commands and actions to the Node server running on my local machine and tested the functionality of the code one piece at a time in isolation for typical unit testing before moving on to full integration testing.
 
-My testing and development made _heavy use of the logging_ functions made available by the [**Tracer**](https://github.com/baryon/tracer) module in order to know what was happening at every part of the code. I also made routine use of _passing error-handling callbacks_ to my asynchronous calls that would typically log errors first before any other logic.
+  My testing and development made _heavy use of the logging_ functions made available by the [**Tracer**](https://github.com/baryon/tracer) module in order to know what was happening at every part of the code. I also made routine use of _passing error-handling callbacks_ to my asynchronous calls that would typically log errors first before any other logic.
 
-If i'm not able to access the source code while testing, as might be the case when testing someone else's production code, I would rely on _manual_ testing through the UI. In my testing, I would intentionally try to __break the application__ by trying all kinds of input and going through the flow repeatedly while trying every possible selection and clicking every possible interactive component in order to see the limits of the application. 
+  If i'm not able to access the source code while testing, as might be the case when testing someone else's production code, I would rely on _manual_ testing through the UI. In my testing, I would intentionally try to __break the application__ by trying all kinds of input and going through the flow repeatedly while trying every possible selection and clicking every possible interactive component in order to see the limits of the application. 
 
-For me, it's important to go through every possible **unique** user flow from end to end in order to fully test anything.  This is key because any flow you don't vet will certainly be discovered by a user, given enough time running on production. 
+  For me, it's important to go through every possible **unique** user flow from end to end in order to fully test anything.  This is key because any flow you don't vet will certainly be discovered by a user, given enough time running on production. 
 
-With that in mind, i've outlined the key _assertions_ I would make while testing this application:
+  With that in mind, i've outlined the key _assertions_ I would make while testing this application:
 
-* **User flows**
+  * **User flows**
 
-  * when user invokes *bid/offer submitting flow* in a channel, it should:
-    - receive POST request to __/command__ subendpoint
-    - _respond_ with POST to same channel with:
-      - a friendly message
-      - one interactive _select_ component with list of _date_ options
-    - receive POST request to __/actions__ endpoint with all necessary data
-    - respond to user action with _confirmation_ message
-    - _query_ database for matching order and return in confirmation message
-    - __asynchronously__ insert_ order into database
+    * when user invokes *bid/offer submitting flow* in a channel, it should:
+      - receive POST request to __/command__ subendpoint
+      - _respond_ with POST to same channel with:
+        - a friendly message
+        - one interactive _select_ component with list of _date_ options
+      - receive POST request to __/actions__ endpoint with all necessary data
+      - respond to user action with _confirmation_ message
+      - _query_ database for matching order and return in confirmation message
+      - __asynchronously__ insert_ order into database
     
-  * when user invokes *parking spot report request flow* in channel, it should:
-    - receive POST request to __/command__ subendpoint
-    - _respond_ with POST to same channel with:
-      - a friendly message
-      - one interactive _select_ component with two buttons for _order type_ selection
-    - receive POST request to __/actions__ endpoint with all necessary data (including report TYPE value)
-    - respond to user action with _confirmation_ message
-    - __asynchronously__ _generate CSV_ correct report of orders (requests or offers) and save file locally
-    - __asynchronously__ _upload CSV_ file to specified upload channel
-    - _notify user_ in channel report was requested when report has finished uploading
+    * when user invokes *parking spot report request flow* in channel, it should:
+      - receive POST request to __/command__ subendpoint
+      - _respond_ with POST to same channel with:
+        - a friendly message
+        - one interactive _select_ component with two buttons for _order type_ selection
+      - receive POST request to __/actions__ endpoint with all necessary data (including report TYPE value)
+      - respond to user action with _confirmation_ message
+      - __asynchronously__ _generate CSV_ correct report of orders (requests or offers) and save file locally
+      - __asynchronously__ _upload CSV_ file to specified upload channel
+      - _notify user_ in channel report was requested when report has finished uploading
 
-* **Database**
+  * **Database**
 
-  * when inserting an order, it should:
-    - require a __userId__ value
-    - require a __date__ value
-    - require a __direction__ value
-    - persist order in database (able to retrieve)
+    * when inserting an order, it should:
+      - require a __userId__ value
+      - require a __date__ value
+      - require a __direction__ value
+      - persist order in database (able to retrieve)
 
-  * when querying the order pool, it should:
-    - search by date first
-    - match only _opposite direction_ of incoming order
-    - return only __one__ match or empty array if none found
-    - if no match, should not remove **any** orders from order pool
-    - if matched, remove **BOTH** orders from order pool
-    - both matched orders are no longer retrievable from database
-    - update ALL master and slave databases (in case of db redundancy)
+    * when querying the order pool, it should:
+      - search by date first
+      - match only _opposite direction_ of incoming order
+      - return only __one__ match or empty array if none found
+      - if no match, should not remove **any** orders from order pool
+      - if matched, remove **BOTH** orders from order pool
+      - both matched orders are no longer retrievable from database
+      - update ALL master and slave databases (in case of db redundancy)
 
 ## Improvements
 
