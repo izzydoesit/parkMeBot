@@ -173,7 +173,7 @@ $ npm run dev
 * [MongoLab](https://mlab.com) hosted database
 
 # Author
-* **Israel Matos** ([Portfolio](https://www.israeldmatos.com) | [LinkedIn](https://linkedin.com/in/israedmatos) | [Github](https://github.com/izzydoesit))
+* **Israel Matos** ([Portfolio](https://www.israeldmatos.com) | [LinkedIn](https://linkedin.com/in/israeldmatos) | [Github](https://github.com/izzydoesit))
 
 # License
 
