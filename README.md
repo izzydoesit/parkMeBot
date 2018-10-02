@@ -22,20 +22,20 @@ If you'd rather not wait, you can also get a CSV file full of parking spot reque
 
 ### Slash commands 
 
-* __/parkingspots__ command triggers a workflowsto get a report of all parking spot requests or offers in CSV format uploaded to the #parking channel.  
+* __/parkingspots__ command triggers a workflow to get a CSV-formatted report of all parking spot requests or offers currently in the order pool uploaded to the #parking channel.  
 
-* __/parkme__ command triggers bid-submitting user flow and lets you instantly if a matching offer is found. 
-* __/rentspot__, the previous command's complement, launches offer-submitting flow and also notifies you if there's a match.
+* __/parkme__ command triggers request-submitting user flow and lets you know instantly if a matching offer is found, or later when one becomes available. 
+* __/rentspot__, the previous command's complement, launches the offer-submitting flow and also notifies you immediately if there's a match or later on when we receive a matching request.
 
 ### Interactive Components
 
-  parkMeBot posts messages to channel (when invoked by slash command) with an interactive select dropdown menu to pick from either bids or offers for the /parkingspots command.
+  parkMeBot posts messages to channel (when invoked by the __/parkingspots__ slash command) with an interactive component containing two buttons to choose your report type from either requests or offers.
 
-  Also uses interactive select dropdown menu in response message to __/parkme__ and __/rentspot__ slash commands so user can pick from range of dates to submit their respoective parking spot bid or offer.
+  Also uses interactive select dropdown menu in response message to __/parkme__ and __/rentspot__ slash commands, so user can pick from range of dates to submit their respoective parking spot bid or offer.
 
 ### Bot User
 
-  We created a bot user so we could encapsulate our parking solution in one workspace entity capable of multiple functions and provides users a single access point for their parking needs. This creates a better user experience by personifying our application in a polished client-facing A.I. user.
+  We created a bot user so we could encapsulate our parking solution in one workspace entity capable of multiple functions and provides users a single access point for their parking needs. This creates a better user experience by personifying our application in a polished client-facing A.I.
 
 ## Key decisions
 
@@ -58,55 +58,55 @@ If you'd rather not wait, you can also get a CSV file full of parking spot reque
 
 ## Testing Plan
 
-The task of QA'ing this application will mostly be manual. I developed locally using [localtunnel](https://localtunnel.github.io) to be able to receive commands and actions to the Node server running on my local machine and tested the functionality of the code one piece at a time in isolation for typical unit testing before moving on to full integration testing.
+  The task of QA'ing this application will mostly be manual. I developed locally using [localtunnel](https://localtunnel.github.io) to be able to receive commands and actions to the Node server running on my local machine and tested the functionality of the code one piece at a time in isolation for typical unit testing before moving on to full integration testing.
 
-My testing and development made _heavy use of the logging_ functions made available by the [**Tracer**](https://github.com/baryon/tracer) module in order to know what was happening at every part of the code. I also made routine use of _passing error-handling callbacks_ to my asynchronous calls that would typically log errors first before any other logic.
+  My testing and development made _heavy use of the logging_ functions made available by the [**Tracer**](https://github.com/baryon/tracer) module in order to know what was happening at every part of the code. I also made routine use of _passing error-handling callbacks_ to my asynchronous calls that would typically log errors first before any other logic.
 
-If i'm not able to access the source code while testing, as might be the case when testing someone else's production code, I would rely on _manual_ testing through the UI. In my testing, I would intentionally try to __break the application__ by trying all kinds of input and going through the flow repeatedly while trying every possible selection and clicking every possible interactive component in order to see the limits of the application. 
+  If i'm not able to access the source code while testing, as might be the case when testing someone else's production code, I would rely on _manual_ testing through the UI. In my testing, I would intentionally try to __break the application__ by trying all kinds of input and going through the flow repeatedly while trying every possible selection and clicking every possible interactive component in order to see the limits of the application. 
 
-For me, it's important to go through every possible **unique** user flow from end to end in order to fully test anything.  This is key because any flow you don't vet will certainly be discovered by a user, given enough time running on production. 
+  For me, it's important to go through every possible **unique** user flow from end to end in order to fully test anything.  This is key because any flow you don't vet will certainly be discovered by a user, given enough time running on production. 
 
-With that in mind, i've outlined the key _assertions_ I would make while testing this application:
+  With that in mind, i've outlined the key _assertions_ I would make while testing this application:
 
-* **User flows**
+  * **User flows**
 
-  * when user invokes *bid/offer submitting flow* in a channel, it should:
-    - receive POST request to __/command__ subendpoint
-    - _respond_ with POST to same channel with:
-      - a friendly message
-      - one interactive _select_ component with list of _date_ options
-    - receive POST request to __/actions__ endpoint with all necessary data
-    - respond to user action with _confirmation_ message
-    - _query_ database for matching order and return in confirmation message
-    - __asynchronously__ insert_ order into database
+    * when user invokes *bid/offer submitting flow* in a channel, it should:
+      - receive POST request to __/command__ subendpoint
+      - _respond_ with POST to same channel with:
+        - a friendly message
+        - one interactive _select_ component with list of _date_ options
+      - receive POST request to __/actions__ endpoint with all necessary data
+      - respond to user action with _confirmation_ message
+      - _query_ database for matching order and return in confirmation message
+      - __asynchronously__ insert_ order into database
     
-  * when user invokes *parking spot report request flow* in channel, it should:
-    - receive POST request to __/command__ subendpoint
-    - _respond_ with POST to same channel with:
-      - a friendly message
-      - one interactive _select_ component with list of _order type_ options
-    - receive POST request to __/actions__ endpoint with all necessary data
-    - respond to user action with _confirmation_ message
-    - __asynchronously__ _generate CSV_ report of orders and save file locally
-    - __asynchronously__ _upload CSV_ file to specified upload channel
-    - _notify user_ in channel report was requested when report has finished uploading
+    * when user invokes *parking spot report request flow* in channel, it should:
+      - receive POST request to __/command__ subendpoint
+      - _respond_ with POST to same channel with:
+        - a friendly message
+        - one interactive _select_ component with two buttons for _order type_ selection
+      - receive POST request to __/actions__ endpoint with all necessary data (including report TYPE value)
+      - respond to user action with _confirmation_ message
+      - __asynchronously__ _generate CSV_ correct report of orders (requests or offers) and save file locally
+      - __asynchronously__ _upload CSV_ file to specified upload channel
+      - _notify user_ in channel report was requested when report has finished uploading
 
-* **Database**
+  * **Database**
 
-  * when inserting an order, it should:
-    - require a __userId__ value
-    - require a __date__ value
-    - require a __direction__ value
-    - persist order in database (able to retrieve)
+    * when inserting an order, it should:
+      - require a __userId__ value
+      - require a __date__ value
+      - require a __direction__ value
+      - persist order in database (able to retrieve)
 
-  * when querying the order pool, it should:
-    - search by date first
-    - match only _opposite direction_ of incoming order
-    - return only __one__ match or empty array if none found
-    - if no match, should not remove **any** orders from order pool
-    - if matched, remove **BOTH** orders from order pool
-    - both matched orders are no longer retrievable from database
-    - update ALL master and slave databases (in case of db redundancy)
+    * when querying the order pool, it should:
+      - search by date first
+      - match only _opposite direction_ of incoming order
+      - return only __one__ match or empty array if none found
+      - if no match, should not remove **any** orders from order pool
+      - if matched, remove **BOTH** orders from order pool
+      - both matched orders are no longer retrievable from database
+      - update ALL master and slave databases (in case of db redundancy)
 
 ## Improvements
 
@@ -116,7 +116,7 @@ With that in mind, i've outlined the key _assertions_ I would make while testing
 
 * **Using local time vs UTC**
 
-  This was an issue I wrestled with in building this application and found it hard to justify using UTC time when it could easily interfere with generating list of days for a local user to pick from to submit a bid/offer on. If a user on PST time submitted a bid/offer after 5pm, the calendar day generating algorithm would *skip a day* in its process of generating the next 7 days to pick from.
+  This was an issue I wrestled with in building this application and found it hard to justify using UTC time when it could easily interfere with generating list of days for a local user to pick from to submit a request/offer on. If a user on PST time submitted a bid/offer after 5pm, the calendar day generating algorithm would *skip a day* in its process of generating the next 7 days to pick from.
 
   As the bot application scales, this range of days would be expanded out to months and involve a more complex *interactive calendar* component that doesn't currently exist.  If I had more time to work on this application, this would be the first thing I would build in order to give my users a wider array of choices.
 
@@ -150,7 +150,7 @@ Then run npm commands to install all dependencies and run the development server
 
 ```
 $ npm install
-$ npm start dev
+$ npm run dev
 ```
 
 ### Dependencies
@@ -173,7 +173,7 @@ $ npm start dev
 * [MongoLab](https://mlab.com) hosted database
 
 # Author
-* **Israel Matos** ([Portfolio](https://www.israeldmatos.com) | [LinkedIn](https://linkedin.com/in/israedmatos) | [Github](https://github.com/izzydoesit))
+* **Israel Matos** ([Portfolio](https://www.israeldmatos.com) | [LinkedIn](https://linkedin.com/in/israeldmatos) | [Github](https://github.com/izzydoesit))
 
 # License
 
