@@ -1,6 +1,6 @@
 # @parkMeBot
 
-__the Slack bot that finds you a spot!__
+__the Slack bot that finds you a sp@t!__
 
 /parkingspots        |  /parkme 
 :-------------------------:|:-------------------------:
